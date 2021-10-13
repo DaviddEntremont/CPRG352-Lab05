@@ -2,6 +2,9 @@ package models;
 
 public class AccountService {
     
+    public AccountService () {
+    }
+    
     public User login(String username, String password) {
         if (username.equals("abe") || username.equals("barb")) {
             if (password.equals("password")) {
@@ -19,12 +22,7 @@ public class AccountService {
                 System.out.println("Failed Authentication");
                 return null;
             }
-                    
-            
-     
-       
-    
-    
+                     
 }
 }
 

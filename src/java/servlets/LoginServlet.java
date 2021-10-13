@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import models.AccountService;
+import models.User;
 
 public class LoginServlet extends HttpServlet {
 
@@ -30,7 +31,7 @@ public class LoginServlet extends HttpServlet {
 
         String userUserPassword = request.getParameter("password");
         
-        AccountService setUser = new AccountService(userUsername, userUserPassword);
+        //AccountService setUser = new AccountService(userUsername, userUserPassword);
         
         sessionObject.setAttribute("user", setUser);
         
@@ -54,11 +55,45 @@ public class LoginServlet extends HttpServlet {
         
         HttpSession sessionObject = request.getSession();
         
+        
+        
         String userUsername = request.getParameter("username");
         
         String userUserPassword = request.getParameter("password");
         
-        AccountService setUser = new AccountService(userUsername, userUserPassword);
+        if (userUsername == null || userUsername.equals("") || userUserPassword == null || userUserPassword.equals("")) {
+            
+            System.out.println("Please enter your username and password");
+            
+            getServletContext().getRequestDispatcher("/WEB-INF/Login.jsp").forward(request, response);
+            
+        }
+        else {
+        
+        
+        AccountService accountAuthenticator = new AccountService();
+        
+        User authenticatorUser = accountAuthenticator.login(userUsername, userUserPassword);
+        
+        if (authenticatorUser != null){
+            
+            sessionObject.setAttribute("username", authenticatorUser.getUsername());
+            
+            getServletContext().getRequestDispatcher("/WEB-INF/HomePage.jsp").forward(request, response);
+        
+            return;
+            
+        }
+        else {
+            
+        }
+        
+        }
+        
+        
+        
+        
+ 
         
         sessionObject.setAttribute("user", setUser);
         
