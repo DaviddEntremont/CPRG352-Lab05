@@ -6,32 +6,31 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import models.user;
+import models.AccountService;
 
 public class LoginServlet extends HttpServlet {
 
     @Override
+    
+    //Display login form and log out the user
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         
         HttpSession sessionObject = request.getSession();
         
-        user ourUser = (user) sessionObject.getAttribute("user");
+        AccountService ourUser = (AccountService) sessionObject.getAttribute("user");
         
         if (ourUser == null) { 
             
-            ourUser = new user();
+            ourUser = new AccountService();
         
         }
-        
-        request.setAttribute("requestAttribute", "attribute in the request object.");
-        
-        
+
         String userUsername = request.getParameter("username");
-        
+
         String userUserPassword = request.getParameter("password");
         
-        user setUser = new user(userUsername, userUserPassword);
+        AccountService setUser = new AccountService(userUsername, userUserPassword);
         
         sessionObject.setAttribute("user", setUser);
         
@@ -42,6 +41,12 @@ public class LoginServlet extends HttpServlet {
 
    
     @Override
+    //submission of the form
+    //validate that username and password are not empy
+    //pass username and password to the login method of "ACCOUNTSERVICE" class
+    //if non null value returned store the username in the session and redirect to the home url
+    //display error message if parameters are invalid
+    //keep textboxes filled
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         
@@ -53,7 +58,7 @@ public class LoginServlet extends HttpServlet {
         
         String userUserPassword = request.getParameter("password");
         
-        user setUser = new user(userUsername, userUserPassword);
+        AccountService setUser = new AccountService(userUsername, userUserPassword);
         
         sessionObject.setAttribute("user", setUser);
         

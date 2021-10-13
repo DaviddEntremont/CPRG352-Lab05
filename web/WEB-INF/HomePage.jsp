@@ -10,6 +10,6 @@
         
         <p>Hello ${user.username}</p>
         
-        <a href="login">Log Out</a>
+        <a href="login" name="operation">Log Out</a>
     </body>
 </html>

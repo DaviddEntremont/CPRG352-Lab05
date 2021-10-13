@@ -9,11 +9,11 @@
         <h1>Login</h1>
          <form method="POST" action="home">
             <label>Username:</label>
-            <input type="text" name="username" value="${note.title}">
+            <input type="text" name="username" value="${user.username}">
             <br>
-            <label>Contents:</label>
-            <input type="text" name="password">${note.contents}
-            <br><br>
+            <label>Password:</label>
+            <input type="text" name="password" value="${user.password}">
+            <br>
             <input type="submit" value="Log in">
         </form>
     </body>
