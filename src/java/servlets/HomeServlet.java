@@ -6,7 +6,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import models.AccountService;
+import models.User;
 
 public class HomeServlet extends HttpServlet {
     
@@ -18,19 +18,18 @@ public class HomeServlet extends HttpServlet {
         
         HttpSession sessionObject = request.getSession();
         
+        User redirectTemp  = (User) sessionObject.getAttribute("user");
         
-        String operation = request.getParameter("operation");
-        if (operation != null && operation.equals("reset")) {
-            sessionObject.invalidate();
-            sessionObject = request.getSession();
+        if (redirectTemp != null) {
+            
+            getServletContext().getRequestDispatcher("/WEB-INF/HomePage.jsp").forward(request, response);
+
+            return;
         }
-        
-        AccountService userObject = (AccountService) sessionObject.getAttribute("user");
-        
-        request.setAttribute("user", userObject);
-        
-        getServletContext().getRequestDispatcher("/WEB-INF/HomePage.jsp").forward(request, response);
-        return;
+        else if (redirectTemp == null) {
+            response.sendRedirect("login");
+            return;
+        }
        
     }
 
@@ -38,7 +37,16 @@ public class HomeServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-
+        
+        System.out.println("Hello");
+        
+         HttpSession sessionObject = request.getSession();
+        
+        String logout = request.getParameter("invalidate");
+        if (logout != null && logout.equals("invalidate")) {
+            sessionObject.invalidate();
+            sessionObject = request.getSession();
+            response.sendRedirect("login");
+        }
     }
-
 }

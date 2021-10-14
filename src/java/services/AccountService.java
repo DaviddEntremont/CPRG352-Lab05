@@ -1,4 +1,6 @@
-package models;
+package services;
+
+import models.User;
 
 public class AccountService {
     

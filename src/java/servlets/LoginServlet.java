@@ -6,7 +6,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import models.AccountService;
+import services.AccountService;
 import models.User;
 
 public class LoginServlet extends HttpServlet {
@@ -19,43 +19,37 @@ public class LoginServlet extends HttpServlet {
         
         HttpSession sessionObject = request.getSession();
         
-        AccountService ourUser = (AccountService) sessionObject.getAttribute("user");
+        String redirectTemp  = (String) sessionObject.getAttribute("Username");
         
-        if (ourUser == null) { 
-            
-            ourUser = new AccountService();
-        
+        if (redirectTemp != null) {
+            response.sendRedirect("home");
+            return;
         }
+        else if (redirectTemp == null) {
+            
+            String userUsername = request.getParameter("username");
 
-        String userUsername = request.getParameter("username");
-
-        String userUserPassword = request.getParameter("password");
+            String userUserPassword = request.getParameter("password");
         
-        //AccountService setUser = new AccountService(userUsername, userUserPassword);
+            request.setAttribute("username", userUsername);
         
-        sessionObject.setAttribute("user", setUser);
-        
-        getServletContext().getRequestDispatcher("/WEB-INF/Login.jsp").forward(request, response);
-        return;
-
+            request.setAttribute("password", userUserPassword);
+            
+            getServletContext().getRequestDispatcher("/WEB-INF/Login.jsp").forward(request, response);
+            return;
+        }
     }
 
-   
-    @Override
-    //submission of the form
     //validate that username and password are not empy
     //pass username and password to the login method of "ACCOUNTSERVICE" class
     //if non null value returned store the username in the session and redirect to the home url
     //display error message if parameters are invalid
     //keep textboxes filled
+    @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         
-        String redirectTemp = request.getParameter("redirectParam");
-        
         HttpSession sessionObject = request.getSession();
-        
-        
         
         String userUsername = request.getParameter("username");
         
@@ -63,68 +57,41 @@ public class LoginServlet extends HttpServlet {
         
         if (userUsername == null || userUsername.equals("") || userUserPassword == null || userUserPassword.equals("")) {
             
-            System.out.println("Please enter your username and password");
+            //System.out.println("Please enter your username and password");
             
             getServletContext().getRequestDispatcher("/WEB-INF/Login.jsp").forward(request, response);
             
         }
         else {
         
-        
         AccountService accountAuthenticator = new AccountService();
         
         User authenticatorUser = accountAuthenticator.login(userUsername, userUserPassword);
         
-        if (authenticatorUser != null){
+        if (authenticatorUser == null){
+           
+            request.setAttribute("username", userUsername);
+        
+            request.setAttribute("password", userUserPassword);
             
-            sessionObject.setAttribute("username", authenticatorUser.getUsername());
-            
-            getServletContext().getRequestDispatcher("/WEB-INF/HomePage.jsp").forward(request, response);
+            getServletContext().getRequestDispatcher("/WEB-INF/Login.jsp").forward(request, response);
         
             return;
             
         }
         else {
+             
+            sessionObject.setAttribute("user", authenticatorUser);
+            
+            response.sendRedirect("home");
+        
+            return;
             
         }
         
-        }
-        
-        
-        
-        
- 
-        
-        sessionObject.setAttribute("user", setUser);
-        
-        //HttpSession sessionObject = request.getSession();
-        
-        //Store object as a session attribute.
-        //sessionObject.setAttribute(String name, object o); 
-        
-        //Return value of specified attribute as an object
-        //String username = (String)sessionObject.getAttribute(String name);
-        
-        //Remove specific attribute from this session.
-        //sessionObject = removeAttribute(Stringe name);
-        
-        
-        
-        
-        if (redirectTemp != null && redirectTemp.equals("true")) {
-            response.sendRedirect("home");
-            return;
-        }
-        else if (redirectTemp != null && redirectTemp.equals("false")) {
-            response.sendRedirect("login");
-            return;
-        }
-        
-        getServletContext().getRequestDispatcher("/WEB-INF/HomePage.jsp").forward(request, response);
-        
-        return;
        
     }
 
 
+}
 }
