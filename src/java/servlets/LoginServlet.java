@@ -19,22 +19,26 @@ public class LoginServlet extends HttpServlet {
         
         HttpSession sessionObject = request.getSession();
         
-        String redirectTemp  = (String) sessionObject.getAttribute("Username");
+        String logout = (String) request.getParameter("invalidate");
+        
+        if (logout != null) {
+            
+            sessionObject.invalidate();
+            sessionObject = request.getSession();
+            sessionObject.setAttribute("loggedout", true);
+            response.sendRedirect("home");
+            return;
+        }
+        
+        User redirectTemp  = (User) sessionObject.getAttribute("user");
         
         if (redirectTemp != null) {
             response.sendRedirect("home");
             return;
         }
+        
         else if (redirectTemp == null) {
-            
-            String userUsername = request.getParameter("username");
-
-            String userUserPassword = request.getParameter("password");
-        
-            request.setAttribute("username", userUsername);
-        
-            request.setAttribute("password", userUserPassword);
-            
+         
             getServletContext().getRequestDispatcher("/WEB-INF/Login.jsp").forward(request, response);
             return;
         }
@@ -51,15 +55,42 @@ public class LoginServlet extends HttpServlet {
         
         HttpSession sessionObject = request.getSession();
         
+        sessionObject.setAttribute("loggedout", false);
+        
         String userUsername = request.getParameter("username");
         
         String userUserPassword = request.getParameter("password");
         
-        if (userUsername == null || userUsername.equals("") || userUserPassword == null || userUserPassword.equals("")) {
+        request.setAttribute("username", userUsername);
+        
+        request.setAttribute("password", userUserPassword);
+        
+        if ((userUsername == null || userUsername.equals("")) && (userUserPassword == null || userUserPassword.equals(""))) {
+        
+            request.setAttribute("nullBoth", true);
+             
+             getServletContext().getRequestDispatcher("/WEB-INF/Login.jsp").forward(request, response);
+             
+             return;
+        }
+        
+        else if (userUsername == null || userUsername.equals("")) { 
             
-            //System.out.println("Please enter your username and password");
+             request.setAttribute("nullUsername", true);
+             
+             getServletContext().getRequestDispatcher("/WEB-INF/Login.jsp").forward(request, response);
+             
+             return;
+        
+        }
+             
+        else if (userUserPassword == null || userUserPassword.equals("")) {
             
-            getServletContext().getRequestDispatcher("/WEB-INF/Login.jsp").forward(request, response);
+            request.setAttribute("nullPassword", true);
+             
+             getServletContext().getRequestDispatcher("/WEB-INF/Login.jsp").forward(request, response);
+             
+             return;
             
         }
         else {
@@ -69,10 +100,8 @@ public class LoginServlet extends HttpServlet {
         User authenticatorUser = accountAuthenticator.login(userUsername, userUserPassword);
         
         if (authenticatorUser == null){
-           
-            request.setAttribute("username", userUsername);
-        
-            request.setAttribute("password", userUserPassword);
+            
+            request.setAttribute("invalid", true);
             
             getServletContext().getRequestDispatcher("/WEB-INF/Login.jsp").forward(request, response);
         

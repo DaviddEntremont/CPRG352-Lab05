@@ -21,9 +21,7 @@ public class HomeServlet extends HttpServlet {
         User redirectTemp  = (User) sessionObject.getAttribute("user");
         
         if (redirectTemp != null) {
-            
             getServletContext().getRequestDispatcher("/WEB-INF/HomePage.jsp").forward(request, response);
-
             return;
         }
         else if (redirectTemp == null) {
@@ -37,16 +35,6 @@ public class HomeServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
-        System.out.println("Hello");
-        
-         HttpSession sessionObject = request.getSession();
-        
-        String logout = request.getParameter("invalidate");
-        if (logout != null && logout.equals("invalidate")) {
-            sessionObject.invalidate();
-            sessionObject = request.getSession();
-            response.sendRedirect("login");
-        }
+               
     }
 }
